@@ -2,7 +2,7 @@
   "name": "supmapnjs",
   "version": "0.0.1",
   "dependencies": {
-    "express": "14.15.x"
+    "express": "4.15.x"
   },
   "engines": {
     "node": "6.10.x",
