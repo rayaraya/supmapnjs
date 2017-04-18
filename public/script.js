@@ -30,11 +30,11 @@ function wsConnect(coord){
     }
 }
 function changePlace(){
-    dot.setGeometry(new ol.geom.Point(ol.proj.transform([30, 30], 'EPSG:4326', 'EPSG:3857')))
+    dot.setGeometry(new ol.geom.Point(ol.proj.transform([30.216170226499887,59.95263361646573], 'EPSG:4326', 'EPSG:3857')))
 }
 //
 var dot = new ol.Feature({
-                geometry: new ol.geom.Point(ol.proj.transform([10, 10], 'EPSG:4326', 'EPSG:3857'))
+                geometry: new ol.geom.Point(ol.proj.transform([30.214218875847227,59.944862260488776], 'EPSG:4326', 'EPSG:3857'))
             });
 var dot_source = new ol.source.Vector({features: Array(dot)});
 //dot_source.addFeatures();
