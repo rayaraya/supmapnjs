@@ -1,3 +1,4 @@
+//https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
 //модифицированный обработчик из библиотеки
 ol.events.condition.ctrlShiftKeysOnly = function(mapBrowserEvent) {
     var originalEvent = mapBrowserEvent.originalEvent;
@@ -28,33 +29,41 @@ function wsConnect(coord){
         ws.close();
     }
 }
-var map = new ol.Map({
-    target: 'map',
-    layers: [
-        new ol.layer.Tile({
-            source: new ol.source.OSM()
-        }),
-        new ol.layer.Vector({
-            title: 'Earthquakes',
-            source: new ol.source.Vector({
-                url: 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson',
-                format: new ol.format.GeoJSON()
-            }),
+function changePlace(){
+    dot.setGeometry(new ol.geom.Point(ol.proj.transform([30, 30], 'EPSG:4326', 'EPSG:3857')))
+}
+//
+var dot = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([10, 10], 'EPSG:4326', 'EPSG:3857'))
+            });
+var dot_source = new ol.source.Vector({features: Array(dot)});
+//dot_source.addFeatures();
+var dot_layer = new ol.layer.Vector({
+            title: 'VectorLayer1',
+            source: dot_source,
             style: new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: 3,
                     fill: new ol.style.Fill({color: 'red'})
                 })
             })
-        }),
+});
+var map = new ol.Map({
+    target: 'map',
+    layers: [
+        new ol.layer.Tile({
+            source: new ol.source.OSM(),
+        }), 
+        dot_layer
     ],
     view: new ol.View({
         //projection: 'EPSG:4326',
         center: ol.proj.fromLonLat([30.2425,59.9426]),
         zoom: 13
-        //  maxResolution: 0.703125
+        //maxResolution: 0.95
     })
 });
+// 
 var infoBox = document.getElementById('info');
 var info2Box = document.getElementById('info2');
 var but = document.getElementById('sendButton');
