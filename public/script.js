@@ -30,23 +30,29 @@ function wsConnect(coord){
     }
 }
 function changePlace(){
-    dot.setGeometry(new ol.geom.Point(ol.proj.transform([30.216170226499887,59.95263361646573], 'EPSG:4326', 'EPSG:3857')))
+    car.setGeometry(new ol.geom.Point(ol.proj.transform([30.216170226499887,59.95263361646573], 'EPSG:4326', 'EPSG:3857')))
 }
 //
-var dot = new ol.Feature({
+var car = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.transform([30.214218875847227,59.944862260488776], 'EPSG:4326', 'EPSG:3857'))
             });
-var dot_source = new ol.source.Vector({features: Array(dot)});
+var car_source = new ol.source.Vector({features: Array(car)});
 //dot_source.addFeatures();
-var dot_layer = new ol.layer.Vector({
+var car_style = new ol.style.Style({
+                image: new ol.style.Icon({
+                            src: "./car.ico"
+                        })
+});
+var car_layer = new ol.layer.Vector({
             title: 'VectorLayer1',
-            source: dot_source,
-            style: new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 3,
-                    fill: new ol.style.Fill({color: 'red'})
-                })
-            })
+            source: car_source,
+            /*style: new ol.style.Style({
+                    image:  new ol.style.Circle({
+                                radius: 3,
+                                fill: new ol.style.Fill({color: 'red'})
+                            })
+            })*/
+            style: car_style
 });
 var map = new ol.Map({
     target: 'map',
@@ -54,7 +60,7 @@ var map = new ol.Map({
         new ol.layer.Tile({
             source: new ol.source.OSM(),
         }), 
-        dot_layer
+        car_layer
     ],
     view: new ol.View({
         //projection: 'EPSG:4326',
