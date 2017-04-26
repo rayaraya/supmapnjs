@@ -18,9 +18,30 @@ function wsConnect(coord){
             }
         }
     };
+    var i = 0, lon = 30.2424, lat = 59.9431;
     ws.onmessage = function(event){
-        console.log("msg " + event.data)
-            info2Box.innerHTML = event.data;
+        var str = event.data;
+        var arr = str.split(" ");
+        lat = arr[0];
+        lon = arr[1];
+        i += 0.001;
+
+        //console.log(lon + " " + lat);
+
+        dot.setGeometry(new ol.geom.Point(ol.proj.transform([lon*1 ,lat*1], 'EPSG:4326', 'EPSG:3857')));
+        /*if(i == -1)
+            lat = crd;
+        else
+            lon = crd;
+
+        i *= -1;*/
+
+       /* dot_source.addFeature(new ol.Feature(
+                new ol.geom.Point
+                        (ol.proj.transform([lon,lat], 'EPSG:4326', 'EPSG:3857'))));
+        map.render();*/
+        //console.log("msg " + event.data)
+          //  info2Box.innerHTML = event.data;
     };
     ws.onclose = function (event) {
         console.log("I'm sorry. Bye!");
@@ -36,7 +57,8 @@ function changePlace(){
 var dot = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.transform([30.214218875847227,59.944862260488776], 'EPSG:4326', 'EPSG:3857'))
             });
-var dot_source = new ol.source.Vector({features: Array(dot)});
+var dotsArr = new Array(dot);
+var dot_source = new ol.source.Vector({features: dotsArr});
 //dot_source.addFeatures();
 var dot_layer = new ol.layer.Vector({
             title: 'VectorLayer1',
