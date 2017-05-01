@@ -1,6 +1,6 @@
-.map {
-    height: 100%;
-    width: 100%;
+.body {
+	padding-bottom: 0px;
+    padding-top: 0px;
 }
 .info {
     height: 100px;
