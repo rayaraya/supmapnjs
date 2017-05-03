@@ -132,7 +132,6 @@ function draw(event){
 
     function animate(event){
         var vectorContext = event.vectorContext;
-        imageStyle.
         vectorContext.setStyle(imageStyle);
         vectorContext.drawGeometry(new ol.geom.MultiPoint(coordinates));
         map.render();
@@ -188,10 +187,10 @@ $('#pause').on('click', function(){
 })
 
 $('#close').on('click', function(){
-    console.log("close");
     if(ws != null && ws.readyState !== 1 ){
-        ws.send(JSON.stringify({"button_msg":"close"}));
+        //ws.send(JSON.stringify({"button_msg":"close"}));
         ws.close();
+        console.log("close");
     }
 })
 
