@@ -150,11 +150,11 @@ function wsConnect(coord, ws){
     ws.onopen = function(){
         console.log("Opening a connection...");
         try {
-                ws.send(coord);
-                //ws.send({"SelectedRect" :" "})
+                //ws.send(coord);
+                ws.send(JSON.stringify({"SelectedRect" : coord}));
         } catch (error) {
                 if (ws.readyState !== 1) {
-                    var waitSend = setInterval(ws.send(coord), 1000);
+                    var waitSend = setInterval(ws.send(JSON.stringify({"SelectedRect" : coord})), 1000);
                 }
         }
             };
@@ -172,7 +172,7 @@ function wsConnect(coord, ws){
 
 $('#play').on('click', function(){
     console.log("play");
-    if(ws != null && ws.readyState !== 1 && pause_flag == 1){
+    if(ws != null && ws.readyState !== 0 && pause_flag == 1){
         ws.send(JSON.stringify({"button_msg":"play"}));
         pause_flag = 0;
     }
@@ -180,15 +180,17 @@ $('#play').on('click', function(){
 
 $('#pause').on('click', function(){
     console.log("pause");
-    if(ws != null && ws.readyState !== 1 && pause_flag == 0){
+    if(ws != null && ws.readyState !== 0 && pause_flag == 0){
         ws.send(JSON.stringify({"button_msg":"pause"}));
         pause_flag = 1;
     }
 })
 
 $('#close').on('click', function(){
-    if(ws != null && ws.readyState !== 1 ){
-        //ws.send(JSON.stringify({"button_msg":"close"}));
+    console.log(ws);
+    console.log(ws.readyState);
+    if(ws != null && ws.readyState !== 0 ){
+        ws.send(JSON.stringify({"button_msg":"close"}));
         ws.close();
         console.log("close");
     }
