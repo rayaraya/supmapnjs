@@ -57,8 +57,8 @@ map.addLayer(vector);
 
 map.addInteraction(dragBox);
 dragBox.on('boxend', function(){     
-    infoBox.innerHTML = '&nbsp;';
-    info2Box.innerHTML = '&nbsp;';
+    //infoBox.innerHTML = '&nbsp;';
+    //info2Box.innerHTML = '&nbsp;';
     var rectangle = dragBox.getGeometry().getCoordinates(false)[0];
     var vertexA = rectangle[0];
     var vertexB = rectangle[1];
@@ -92,7 +92,7 @@ dragBox.on('boxend', function(){
         + lowerLeft[1] + ','
         + upperRight[0] + ','
         + upperRight[1] + ']';
-    infoBox.innerHTML = str;
+    //infoBox.innerHTML = str;
 
     var strmin = + lowerLeft[0] + ','
         + lowerLeft[1] + ','
@@ -151,8 +151,8 @@ function wsConnect(coord, ws){
     ws.onopen = function(){
         console.log("Opening a connection...");
         try {
-                //ws.send(coord);
-                ws.send({"SelectedRect" :" "})
+                ws.send(coord);
+                //ws.send({"SelectedRect" :" "})
         } catch (error) {
                 if (ws.readyState !== 1) {
                     var waitSend = setInterval(ws.send(coord), 1000);
