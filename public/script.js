@@ -125,7 +125,7 @@ function prepareCrd(cars){
     //console.log(coordinates);
 }
 
-function draw(event){
+function draw(){
 
     var listenerKey;
     listenerKey = map.on('postcompose', animate);
@@ -139,8 +139,8 @@ function animate(event){
         map.render();
 }
 
-source.on('change', function(event){
-    draw(event);
+source.on('change', function(){
+    draw();
 })
 
 function wsConnect(coord, ws){
