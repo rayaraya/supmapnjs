@@ -44,13 +44,26 @@ var map = new ol.Map({
 });
 
 var source = new ol.source.Vector();
-
+var rect_source = new ol.source.Vector();
 var vector = new ol.layer.Vector({
       source: source
     });
+var rect_vector = new ol.layer.Vector({
+      source: rect_source,
+      style: new ol.style.Style({
+          stroke: new ol.style.Stroke({
+            color: 'rgba(0, 0, 255, 0.5)',
+            width: 2
+          }),
+          fill: new ol.style.Fill({
+            color: 'rgba(0, 0, 255, 0.07)'
+          })
+        })
+    });
+
 
 map.addLayer(vector);
-
+map.addLayer(rect_vector);
 
 map.addInteraction(dragBox);
 
@@ -97,6 +110,20 @@ dragBox.on('boxend', function(){
         + upperRight[0] + ','
         + upperRight[1] ;
 
+    lowerLeft = ol.proj.transform(lowerLeft, 'EPSG:4326', 'EPSG:3857');
+    upperRight = ol.proj.transform(upperRight, 'EPSG:4326', 'EPSG:3857');
+
+    var polyCoords = [];
+    polyCoords.push(lowerLeft);
+    polyCoords.push([lowerLeft[0],upperRight[1]]);
+    polyCoords.push(upperRight);
+    polyCoords.push([upperRight[0],lowerLeft[1]]);
+    polyCoords.push(lowerLeft);
+    var feature = new ol.Feature({
+        geometry: new ol.geom.Polygon([polyCoords])
+    });
+    rect_source.addFeature(feature);
+
     wsConnect(strmin, ws);
 })
 
@@ -142,28 +169,27 @@ function animate(event){
 source.on('change', function(){
     draw();
 })
-
 function wsConnect(coord, ws){
     //ws = new WebSocket("ws://serene-plains-38004.herokuapp.com/");
     ws = new WebSocket("ws://localhost:7070/");
     ws.onopen = function(){
         console.log("Opening a connection...");
         try {
-                //ws.send(coord);
-                ws.send(JSON.stringify({"SelectedRect" : coord}));
+            ws.send(JSON.stringify({"SelectedRect" : coord}));
         } catch (error) {
-                if (ws.readyState !== 1) {
-                    var waitSend = setInterval(ws.send(JSON.stringify({"SelectedRect" : coord})), 1000);
-                }
+            if (ws.readyState !== 1) {
+                var waitSend = setInterval(ws.send(JSON.stringify({"SelectedRect" : coord})), 1000);
+            }
         }
-            };
+    };
     ws.onmessage = function(event){
-            var cord = JSON.parse(event.data);
-            addData(cord);
-        };
+        var cord = JSON.parse(event.data);
+        addData(cord);
+    };
     ws.onclose = function (event) {
-            console.log("I'm sorry. Bye!");
-        };
+        rect_source.clear();
+        console.log("I'm sorry. Bye!");
+    };
 }
 
 $('#play').on('click', function(){
