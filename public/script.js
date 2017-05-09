@@ -8,9 +8,6 @@ function setHeight() {
 setHeight();
 $(window).resize( setHeight ); 
 
-//var mySlider = $("input.ex1").slider();
-
-
 var ws;
 var pause_flag;
 //модифицированный обработчик из библиотеки
@@ -56,6 +53,7 @@ map.addLayer(vector);
 
 
 map.addInteraction(dragBox);
+
 dragBox.on('boxend', function(){     
     //infoBox.innerHTML = '&nbsp;';
     //info2Box.innerHTML = '&nbsp;';
@@ -119,30 +117,31 @@ function addData(cars){
 
 function prepareCrd(cars){
     //console.log(cars);
-    coordinates = [];
+    var cor = []
     for(var i = 0; i < cars.length; i++){
-        coordinates.push(ol.proj.transform(cars[i], 'EPSG:4326', 'EPSG:3857'));
+        cor.push(ol.proj.transform(cars[i], 'EPSG:4326', 'EPSG:3857'));
     }
+    coordinates = cor;
     //console.log(coordinates);
 }
 
 function draw(event){
 
     var listenerKey;
-
-    function animate(event){
-        var vectorContext = event.vectorContext;
-        vectorContext.setStyle(imageStyle);
-        vectorContext.drawGeometry(new ol.geom.MultiPoint(coordinates));
-        map.render();
-    }
     listenerKey = map.on('postcompose', animate);
+}
+
+function animate(event){
+        var vectorContext = event.vectorContext;
+        var me = new ol.geom.MultiPoint(coordinates);
+        vectorContext.setStyle(imageStyle);
+        vectorContext.drawGeometry(me);
+        map.render();
 }
 
 source.on('change', function(event){
     draw(event);
 })
-
 
 function wsConnect(coord, ws){
     //ws = new WebSocket("ws://serene-plains-38004.herokuapp.com/");
@@ -159,11 +158,8 @@ function wsConnect(coord, ws){
         }
             };
     ws.onmessage = function(event){
-        //console.log("msg " + event.data)
-        //info2Box.innerHTML = event.data;
-            //console.log(event.data);
-            //console.log(JSON.parse(event.data));
-            addData(JSON.parse(event.data));
+            var cord = JSON.parse(event.data);
+            addData(cord);
         };
     ws.onclose = function (event) {
             console.log("I'm sorry. Bye!");
