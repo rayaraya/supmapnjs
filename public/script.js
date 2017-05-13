@@ -26,7 +26,7 @@ var map = new ol.Map({
     ],
     view: new ol.View({
         //projection: 'EPSG:4326',
-        center: ol.proj.fromLonLat([30.2425,59.9426]),
+        center: ol.proj.fromLonLat([24.7306,59.4251]),
         zoom: 13
         //  maxResolution: 0.703125
     })
@@ -154,6 +154,10 @@ function animate(event){
         vectorContext.drawGeometry(me);
         map.render();
 }
+rect_source.on('clear', function(){
+    coordinates = [];
+    source.refresh();
+})
 
 source.on('change', function(){
     draw();
@@ -170,6 +174,7 @@ function wsConnect(coord){
                 var waitSend = setInterval(ws.send(JSON.stringify({"SelectedRect" : coord})), 1000);
             }
         }
+        map.removeInteraction(dragBox);
         pause_flag = 0;
     };
     ws.onmessage = function(event){
@@ -177,7 +182,6 @@ function wsConnect(coord){
         addData(cord);
     };
     ws.onclose = function (event) {
-        rect_source.clear();
         console.log("I'm sorry. Bye!");
         pause_flag = 2;
     };
@@ -202,8 +206,9 @@ $('#pause').on('click', function(){
 $('#close').on('click', function(){
     if(ws != undefined && !(ws.readyState === ws.CLOSED)){
         ws.send(JSON.stringify({"button_msg":"close"}));
+        rect_source.clear()
+        map.render();
         ws.close();
-        //map.removeInteraction(dragBox);
         console.log("close");
     }
 })
@@ -214,9 +219,12 @@ $('#start_m').on('click', function(){
     }
     else{
         if(confirm("Do you want to start a new session?")){
-            ws.send(JSON.stringify({"button_msg":"close"}));
-            ws.close();
-            map.removeInteraction(dragBox);
+            if (!(ws.readyState === ws.CLOSING)){
+                ws.send(JSON.stringify({"button_msg":"close"}));
+                ws.close();
+            }
+            rect_source.clear()
+            map.render();
             map.addInteraction(dragBox);
         }
         else{
