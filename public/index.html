@@ -5,13 +5,14 @@
     <title>SuperMap</title>
 
     <link href="https://openlayers.org/en/v4.0.1/css/ol.css" rel="stylesheet" type="text/css">
-    <link href="bootstrap/css/mapstyle.css" rel="stylesheet">
-    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="css/mapstyle.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.3.0/rangeslider.min.css" rel="stylesheet">
+
     <script src="http://code.jquery.com/jquery-latest.js"></script>
-   <!--  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"> </script> -->
     <script src="https://openlayers.org/en/v4.1.0/build/ol.js"></script>
-    <script async src="script.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/bootstrap-slider.min.js"> </script>
+    <script async src="scripts/script.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.3.0/rangeslider.min.js"> </script>
   </head>
 
   <body style="padding-bottom: 0px;padding-top: 0px;">
@@ -28,10 +29,15 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav ">
             <li><a href="/">Home</a></li>
-            <li><a href="/">About</a></li>
-            <li><a href="/">Help</a></li>
+            <li><a href="/about">About</a></li>
+            <!-- <li><a href="/">Help</a></li> -->
           </ul>
+          <!-- <div>
+            <h6>Change smth</h6>
+          <input type="range" min="-20" max="20" value="-10" style="width:20%" data-rangeslider> <output></output>
+        </div> -->
           <form class="navbar-form navbar-right">
+            <button type="button" id="start_m" class="btn btn-default">Start Modeling</button>
             <div class="btn-group" role="group" aria-label="">
             <button type="button" id="play" class="btn btn-default" aria-label="glyphicon-play">
               <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
@@ -44,6 +50,7 @@
             </button>
             </div>
           </form>
+          <p class="navbar-text navbar-right"> For a start select an area by clicking Ctrl + left mouse button   </p>
         </div>
       </div>
       <div id="map">
