@@ -26,7 +26,7 @@ var map = new ol.Map({
     view: new ol.View({
         //projection: 'EPSG:4326',
         center: ol.proj.fromLonLat([24.7306,59.4251]),
-        zoom: 13
+        zoom: 14
         //  maxResolution: 0.703125
     })
 });
@@ -190,19 +190,19 @@ function wsConnect(coord){
 }
 
 $('#play').on('click', function(){
-    if(ws != undefined && !(ws.readyState === ws.CLOSED) && pause_flag === 1){
-        ws.send(JSON.stringify({"button_msg":"play"}));
-        console.log("play");
-        pause_flag = 0;
-    }
+    // if(ws != undefined && !(ws.readyState === ws.CLOSED) && pause_flag === 1){
+    //     ws.send(JSON.stringify({"button_msg":"play"}));
+    //     console.log("play");
+    //     pause_flag = 0;
+    // }
 })
 
 $('#pause').on('click', function(){
-    if(ws != undefined && !(ws.readyState === ws.CLOSED && pause_flag === 0)){
-        ws.send(JSON.stringify({"button_msg":"pause"}));
-        console.log("pause");
-        pause_flag = 1;
-    }
+    // if(ws != undefined && !(ws.readyState === ws.CLOSED && pause_flag === 0)){
+    //     ws.send(JSON.stringify({"button_msg":"pause"}));
+    //     console.log("pause");
+    //     pause_flag = 1;
+    // }
 })
 
 $('#close').on('click', function(){
@@ -217,7 +217,7 @@ $('#close').on('click', function(){
 
 $('#start_m').on('click', function(){
     if((ws === undefined || ws.readyState === ws.CLOSED)){
-        //map.addInteraction(dragBox);
+        map.addInteraction(dragBox);
     }
     else{
         if(confirm("Do you want to start a new session?")){
