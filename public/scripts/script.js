@@ -10,7 +10,6 @@ $(window).resize(setHeight);
 
 var ws;
 var pause_flag;
-var session_flag;
 var coordinates = [];
 
 var dragBox = new ol.interaction.DragBox({
@@ -62,7 +61,7 @@ ol.events.condition.ctrlShiftKeysOnly = function(mapBrowserEvent) {
     originalEvent.shiftKey);
 };
 
-dragBox.on('boxend', function(){     
+dragBox.on('boxend', function(){
     var rectangle = dragBox.getGeometry().getCoordinates(false)[0];
     var vertexA = rectangle[0];
     var vertexB = rectangle[1];
@@ -111,6 +110,7 @@ dragBox.on('boxend', function(){
     polyCoords.push(upperRight);
     polyCoords.push([upperRight[0],lowerLeft[1]]);
     polyCoords.push(lowerLeft);
+
     var feature = new ol.Feature({
         geometry: new ol.geom.Polygon([polyCoords])
     });
@@ -154,6 +154,7 @@ function animate(event){
         vectorContext.drawGeometry(me);
         map.render();
 }
+
 rect_source.on('clear', function(){
     coordinates = [];
     source.refresh();
@@ -162,6 +163,7 @@ rect_source.on('clear', function(){
 source.on('change', function(){
     draw();
 })
+
 function wsConnect(coord){
     //ws = new WebSocket("ws://serene-plains-38004.herokuapp.com/");
     ws = new WebSocket("ws://localhost:7070/");

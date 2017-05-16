@@ -11,6 +11,10 @@ app.get('/', function (req, res) {
   res.sendFile('/index.html');
 });
 
+app.get('/about', function (req, res) {
+  res.sendFile('/about.html');
+});
+
 var port = process.env.PORT || 8080;
 app.listen(port, function() {
   console.log("Listening on " + port);
