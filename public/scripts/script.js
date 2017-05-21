@@ -165,8 +165,8 @@ source.on('change', function(){
 })
 
 function wsConnect(coord){
-    ws = new WebSocket("ws://serene-plains-38004.herokuapp.com/");
-    //ws = new WebSocket("ws://localhost:7070/");
+    //ws = new WebSocket("wss://serene-plains-38004.herokuapp.com/");
+    ws = new WebSocket("ws://localhost:7070/");
     ws.onopen = function(){
         console.log("Opening a connection...");
         try {
@@ -184,6 +184,7 @@ function wsConnect(coord){
         addData(cord);
     };
     ws.onclose = function (event) {
+        ws.send(JSON.stringify({"button_msg":"close"}));
         console.log("I'm sorry. Bye!");
         pause_flag = 2;
     };
