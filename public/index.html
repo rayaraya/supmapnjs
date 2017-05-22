@@ -7,8 +7,7 @@
     <link href="https://openlayers.org/en/v4.0.1/css/ol.css" rel="stylesheet" type="text/css">
     <link href="css/mapstyle.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
-    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.3.0/rangeslider.min.css" rel="stylesheet">
- -->
+
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
     <script src="https://openlayers.org/en/v4.1.0/build/ol.js"></script>
@@ -16,7 +15,7 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/bootstrap-slider.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/css/bootstrap-slider.css" rel="stylesheet">
-   <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/rangeslider.js/2.3.0/rangeslider.min.js"> </script> -->
+    
   </head>
 
   <body style="padding-bottom: 0px;padding-top: 0px;">
@@ -35,15 +34,11 @@
             <li><a href="/">Home</a></li>
             <li><a href="/about">About</a></li>
           </ul>
+
+
           <form class="navbar-form navbar-right">
             <button type="button" id="start_m" class="btn btn-default">Start Modeling</button>
             <div class="btn-group" role="group" aria-label="">
-            <button type="button" id="play" class="btn btn-default" aria-label="glyphicon-play">
-              <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-            </button>
-            <button type="button" id="pause" class="btn btn-default" aria-label="glyphicon-pause">
-              <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
-            </button>
             <button type="button" id="close" class="btn btn-default" aria-label="glyphicon-remove">
               <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
@@ -69,12 +64,14 @@
             <input id="capacity" data-slider-id='capacity1' type="text" data-slider-min="1" data-slider-max="20" data-slider-step="1" data-slider-value="5" />
             &nbsp; Capacity 
           </p>
-          <!-- <p>
-            <b>  &nbsp; Color </b>
+          <p>
+            <b>
+            &nbsp; Tips 
+          </b>
           </p>
           <p>
-           <input id="color" data-slider-id='color1' type="text" data-slider-min="0" data-slider-max="255" data-slider-step="1" data-slider-value="14" />
-         </p> -->
+            &nbsp; If you can't select an area, please zoom in <br> &nbsp; or click Start Modeling button.
+          </p>
 
         </div>
       </div>
