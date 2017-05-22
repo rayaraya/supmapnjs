@@ -15,3 +15,31 @@
     margin: 0px 0 0px; 
     border-bottom: 1px solid #eee;
 }
+
+.map{
+    z-index: -1;
+    position: relative;
+}
+
+.panel{
+	z-index: 0;
+	opacity: 0.8;
+	position: absolute;
+	top: 50px;
+	right: 10px;
+}
+
+#speed1 .slider-selection {
+	background: #A8C7EB;
+}
+
+#capacity1 .slider-selection {
+	background:#F3BCD4;
+}
+
+#color1 .slider-selection {
+	background:#FF9E9E;
+}
+
+
+

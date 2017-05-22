@@ -5,12 +5,50 @@ function setHeight() {
         height: ($(window).height() - 50) + 'px'
     });
 }
+
 setHeight();
 $(window).resize(setHeight); 
+
+var speed = $('#speed').slider({
+    formatter: function(value) {
+        return 'X: ' + value;
+    }
+});
+
+speed.on('change', function(event){
+    if(ws != undefined && !(ws.readyState === ws.CLOSED)){
+        ws.send(JSON.stringify({"speed_change": event.value}));
+        console.log("speed_change");
+    }
+});
+
+var capacity = $('#capacity').slider({
+    formatter: function(value) {
+        return 'C: ' + value;
+    }
+});
+
+capacity.on('change', function(event){
+    if(ws != undefined && !(ws.readyState === ws.CLOSED)){
+        ws.send(JSON.stringify({"capacity_change": event.value}));
+        console.log("capacity_change");
+    }
+});
+
+
+// var r = $('#color').slider()
+//         .on('slide', colorChange)
+//         .data('slider');
+
+// var colorChange = function() {
+//     //$('#').css('background', 'rgb('+r.getValue()+','+g.getValue()+','+b.getValue()+')')
+//     cars_color = 'rgb('+r.getValue()+', 85, 110)';
+// };
 
 var ws;
 var pause_flag;
 var coordinates = [];
+var cars_color = 'rgb(0, 85, 110)';
 
 var dragBox = new ol.interaction.DragBox({
     condition: ol.events.condition.platformModifierKeyOnly
