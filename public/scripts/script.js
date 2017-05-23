@@ -3,7 +3,6 @@
 setHeight();
 
 var ws;
-var pause_flag;
 var coordinates = [];
 var cars_color = 'rgb(0, 85, 110)';
 
@@ -169,7 +168,6 @@ function wsConnect(coord){
             }
         }
         map.removeInteraction(dragBox);
-        pause_flag = 0;
     };
     ws.onmessage = function(event){
         var cord = JSON.parse(event.data);
@@ -178,7 +176,6 @@ function wsConnect(coord){
     ws.onclose = function (event) {
         ws.send(JSON.stringify({"button_msg":"close"}));
         console.log("I'm sorry. Bye!");
-        pause_flag = 2;
     };
 }
 
