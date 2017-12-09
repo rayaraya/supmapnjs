@@ -3,7 +3,6 @@
 setHeight();
 
 var ws;
-var pause_flag;
 var coordinates = [];
 var cars_color = 'rgb(0, 85, 110)';
 
@@ -157,8 +156,8 @@ function animate(event){
 }
 
 function wsConnect(coord){
-    //ws = new WebSocket("wss://serene-plains-38004.herokuapp.com/");
-    ws = new WebSocket("ws://localhost:7070/");
+    ws = new WebSocket("wss://serene-plains-38004.herokuapp.com/");
+    //ws = new WebSocket("ws://localhost:7070/");
     ws.onopen = function(){
         console.log("Opening a connection...");
         try {
@@ -169,7 +168,6 @@ function wsConnect(coord){
             }
         }
         map.removeInteraction(dragBox);
-        pause_flag = 0;
     };
     ws.onmessage = function(event){
         var cord = JSON.parse(event.data);
@@ -178,7 +176,6 @@ function wsConnect(coord){
     ws.onclose = function (event) {
         ws.send(JSON.stringify({"button_msg":"close"}));
         console.log("I'm sorry. Bye!");
-        pause_flag = 2;
     };
 }
 
@@ -198,11 +195,7 @@ function setHeight() {
     });
 }
 
-var speed = $('#speed').slider({
-    formatter: function(value) {
-        return 'X: ' + value;
-    }
-});
+var speed = $('#speed').slider();
 
 speed.on('change', function(event){
     if(ws != undefined && !(ws.readyState === ws.CLOSED)){
@@ -211,11 +204,7 @@ speed.on('change', function(event){
     }
 });
 
-var capacity = $('#capacity').slider({
-    formatter: function(value) {
-        return 'C: ' + value;
-    }
-});
+var capacity = $('#capacity').slider();
 
 capacity.on('change', function(event){
     if(ws != undefined && !(ws.readyState === ws.CLOSED)){
