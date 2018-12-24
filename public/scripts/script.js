@@ -10,7 +10,21 @@ var dragBox = new ol.interaction.DragBox({
     condition: ol.events.condition.platformModifierKeyOnly
 });
 
+
+var mousePositionControl = new ol.control.MousePosition({
+    coordinateFormat: ol.coordinate.createStringXY(4),
+    projection: 'EPSG:4326',
+    // comment the following two lines to have the mouse position
+    // be placed within the map.
+    //className: 'custom-mouse-position',
+    //target: document.getElementById('mouse-position'),
+    undefinedHTML: '&nbsp;'
+});
+
+
+
 var map = new ol.Map({
+    controls: ol.control.defaults().extend([mousePositionControl]),
     target: 'map',
     layers: [
         new ol.layer.Tile({
@@ -28,30 +42,30 @@ var map = new ol.Map({
 var source = new ol.source.Vector();
 var rect_source = new ol.source.Vector();
 var vector = new ol.layer.Vector({
-      source: source
-    });
+    source: source
+});
 
 var rect_vector = new ol.layer.Vector({
-      source: rect_source,
-      style: new ol.style.Style({
-          stroke: new ol.style.Stroke({
+    source: rect_source,
+    style: new ol.style.Style({
+        stroke: new ol.style.Stroke({
             color: 'rgba(0, 0, 255, 0.5)',
             width: 2
-          }),
-          fill: new ol.style.Fill({
+        }),
+        fill: new ol.style.Fill({
             color: 'rgba(0, 0, 255, 0.07)'
-          })
         })
-    });
+    })
+});
 
 var imageStyle = new ol.style.Style({
     image: new ol.style.Circle({
-      radius: 3,
-      snapToPixel: false,
-      fill: new ol.style.Fill({color: 'blue'}),
-      stroke: new ol.style.Stroke({color: 'white', width: 1})
+        radius: 3,
+        snapToPixel: false,
+        fill: new ol.style.Fill({color: 'blue'}),
+        stroke: new ol.style.Stroke({color: 'white', width: 1})
     })
-  });
+});
 
 map.addLayer(vector);
 map.addLayer(rect_vector);
@@ -60,8 +74,8 @@ map.addInteraction(dragBox);
 ol.events.condition.ctrlShiftKeysOnly = function(mapBrowserEvent) {
     var originalEvent = mapBrowserEvent.originalEvent;
     return (!originalEvent.altKey &&
-    (ol.has.MAC ? originalEvent.metaKey : originalEvent.ctrlKey) &&
-    originalEvent.shiftKey);
+        (ol.has.MAC ? originalEvent.metaKey : originalEvent.ctrlKey) &&
+        originalEvent.shiftKey);
 };
 
 dragBox.on('boxend', function(){
@@ -107,26 +121,31 @@ dragBox.on('boxend', function(){
             + upperRight[0] + ','
             + upperRight[1] ;
 
-        lowerLeft = ol.proj.transform(lowerLeft, 'EPSG:4326', 'EPSG:3857');
-        upperRight = ol.proj.transform(upperRight, 'EPSG:4326', 'EPSG:3857');
+        drawRect(lowerLeft, upperRight);
 
-        var polyCoords = [];
-        polyCoords.push(lowerLeft);
-        polyCoords.push([lowerLeft[0],upperRight[1]]);
-        polyCoords.push(upperRight);
-        polyCoords.push([upperRight[0],lowerLeft[1]]);
-        polyCoords.push(lowerLeft);
-
-        var feature = new ol.Feature({
-            geometry: new ol.geom.Polygon([polyCoords])
-        });
-        rect_source.addFeature(feature);
-
-        wsConnect(strmin); 
+        wsStartWithSelection(strmin);
     }else{
 
     }
 })
+
+function drawRect(lowerLeft, upperRight) {
+    lowerLeft = ol.proj.transform(lowerLeft, 'EPSG:4326', 'EPSG:3857');
+    upperRight = ol.proj.transform(upperRight, 'EPSG:4326', 'EPSG:3857');
+
+    var polyCoords = [];
+    polyCoords.push(lowerLeft);
+    polyCoords.push([lowerLeft[0],upperRight[1]]);
+    polyCoords.push(upperRight);
+    polyCoords.push([upperRight[0],lowerLeft[1]]);
+    polyCoords.push(lowerLeft);
+
+    var feature = new ol.Feature({
+        geometry: new ol.geom.Polygon([polyCoords])
+    });
+    rect_source.addFeature(feature);
+    //source.refresh();
+}
 
 function addData(cars){
     prepareCrd(cars);
@@ -148,33 +167,43 @@ function draw(){
 }
 
 function animate(event){
-        var vectorContext = event.vectorContext;
-        var me = new ol.geom.MultiPoint(coordinates);
-        vectorContext.setStyle(imageStyle);
-        vectorContext.drawGeometry(me);
-        map.render();
+    var vectorContext = event.vectorContext;
+    var me = new ol.geom.MultiPoint(coordinates);
+    vectorContext.setStyle(imageStyle);
+    vectorContext.drawGeometry(me);
+    map.render();
 }
 
-function wsConnect(coord){
+
+function wsStartWithSelection(coord){
+    map.removeInteraction(dragBox);
+    wsConnect(JSON.stringify({"messageType" : "selectedRect", "coordinates" : coord}));
+}
+
+function wsStartWithConfigUpload(config){
+    wsConnect(config);
+}
+
+function wsConnect(message){
     ws = new WebSocket("wss://serene-plains-38004.herokuapp.com/");
     //ws = new WebSocket("ws://localhost:7070/");
     ws.onopen = function(){
         console.log("Opening a connection...");
         try {
-            ws.send(JSON.stringify({"SelectedRect" : coord}));
+            ws.send(message);
         } catch (error) {
             if (ws.readyState !== 1) {
-                var waitSend = setInterval(ws.send(JSON.stringify({"SelectedRect" : coord})), 1000);
+                var waitSend = setInterval(ws.send(message), 1000);
             }
         }
-        map.removeInteraction(dragBox);
+        //map.removeInteraction(dragBox);
     };
     ws.onmessage = function(event){
         var cord = JSON.parse(event.data);
         addData(cord);
     };
     ws.onclose = function (event) {
-        ws.send(JSON.stringify({"button_msg":"close"}));
+        ws.send(JSON.stringify({"messageType" : "buttonMsg", "value" :"close"}));
         console.log("I'm sorry. Bye!");
     };
 }
@@ -199,7 +228,7 @@ var speed = $('#speed').slider();
 
 speed.on('change', function(event){
     if(ws != undefined && !(ws.readyState === ws.CLOSED)){
-        ws.send(JSON.stringify({"speed_change": event.value}));
+        ws.send(JSON.stringify({"messageType" : "speedChange", "value" : event.value}));
         console.log("speed_change");
     }
 });
@@ -208,16 +237,16 @@ var capacity = $('#capacity').slider();
 
 capacity.on('change', function(event){
     if(ws != undefined && !(ws.readyState === ws.CLOSED)){
-        ws.send(JSON.stringify({"capacity_change": event.value}));
+        ws.send(JSON.stringify({"messageType" : "capacityChange", "value" : event.value}));
         console.log("capacity_change");
     }
 });
 
-$(window).resize(setHeight); 
+$(window).resize(setHeight);
 
 $('#close').on('click', function(){
     if(ws != undefined && !(ws.readyState === ws.CLOSED)){
-        ws.send(JSON.stringify({"button_msg":"close"}));
+        ws.send(JSON.stringify({"messageType" : "buttonMsg", "value" : "close"}));
         rect_source.clear()
         map.render();
         ws.close();
@@ -231,12 +260,7 @@ $('#start_m').on('click', function(){
     }
     else{
         if(confirm("Do you want to start a new session?")){
-            if (!(ws.readyState === ws.CLOSING)){
-                ws.send(JSON.stringify({"button_msg":"close"}));
-                ws.close();
-            }
-            rect_source.clear()
-            map.render();
+            clearSession();
             map.addInteraction(dragBox);
         }
         else{
@@ -245,3 +269,62 @@ $('#start_m').on('click', function(){
     }
 })
 
+function clearSession() {
+    if (!(ws.readyState === ws.CLOSING)){
+        ws.send(JSON.stringify({"messageType" : "button_msg", "value" : "close"}));
+        ws.close();
+    }
+    rect_source.clear()
+    map.render();
+}
+
+var conf_file = document.getElementById("conf_file");
+var res = ""
+var content
+
+conf_file.onchange = function () {
+    var file = conf_file.files[0]//.value.split('\\')[fileupload.value.split('\\').length - 1];
+    if (file) {
+        if(!(ws === undefined || ws.readyState === ws.CLOSED)){
+            if(confirm("Do you want to start a new session?")) {
+                clearSession();
+            }
+            else {
+                return;
+            }
+
+        }
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = function (evt) {
+            var fileContentString = evt.target.result;
+            var fileContentJson = JSON.parse(fileContentString);
+            console.log(fileContentJson)
+            var coords = fileContentJson["rectangle"];
+
+            var lowerLeft = [coords[1], coords[0]];
+            var upperRight = [coords[3], coords[2]];
+
+            //lowerLeft = ol.proj.toLonLat(lowerLeft);
+            //upperRight =  ol.proj.toLonLat(upperRight);
+
+            var center_lat = (coords[0] + coords[2]) / 2;
+            var center_lon = (coords[1] + coords[3]) / 2;
+            map.getView().animate({
+                center: ol.proj.fromLonLat([center_lon, center_lat]),
+                duration: 2000,
+                zoom : 15
+            });
+
+            drawRect(lowerLeft, upperRight);
+
+            wsStartWithConfigUpload(fileContentString);
+            console.log("sent conf file");
+        }
+        reader.onerror = function (evt) {
+            console.log("error reading file");
+        }
+
+    }
+
+};

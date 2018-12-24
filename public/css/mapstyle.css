@@ -41,5 +41,17 @@
 	background:#FF9E9E;
 }
 
-
+.file {
+    position: relative;
+    overflow: hidden;
+    margin-top: 7px;
+    margin-left: 5px;
+}
+input {
+    position: absolute;
+    font-size: 50px;
+    opacity: 0;
+    right: 0;
+    top: 0;
+}
 
