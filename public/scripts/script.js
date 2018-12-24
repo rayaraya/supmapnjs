@@ -199,8 +199,11 @@ function wsConnect(message){
         //map.removeInteraction(dragBox);
     };
     ws.onmessage = function(event){
-        var cord = JSON.parse(event.data);
-        addData(cord);
+        var data = JSON.parse(event.data);
+        if (data["log"] != null)
+            console.log(data)
+        else
+            addData(data);
     };
     ws.onclose = function (event) {
         ws.send(JSON.stringify({"messageType" : "buttonMsg", "value" :"close"}));
