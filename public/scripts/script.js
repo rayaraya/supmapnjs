@@ -185,8 +185,8 @@ function wsStartWithConfigUpload(config){
 }
 
 function wsConnect(message){
-    ws = new WebSocket("wss://serene-plains-38004.herokuapp.com/");
-    //ws = new WebSocket("ws://localhost:7070/");
+    //ws = new WebSocket("wss://serene-plains-38004.herokuapp.com/");
+    ws = new WebSocket("ws://localhost:7070/");
     ws.onopen = function(){
         console.log("Opening a connection...");
         try {
