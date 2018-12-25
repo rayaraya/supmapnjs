@@ -33,7 +33,7 @@ var map = new ol.Map({
     ],
     view: new ol.View({
         //projection: 'EPSG:4326',
-        center: ol.proj.fromLonLat([43.994,56.321]),
+        center: ol.proj.fromLonLat([43.994, 56.321]),
         zoom: 14
         //  maxResolution: 0.703125
     })
@@ -62,8 +62,8 @@ var imageStyle = new ol.style.Style({
     image: new ol.style.Circle({
         radius: 3,
         snapToPixel: false,
-        fill: new ol.style.Fill({color: 'blue'}),
-        stroke: new ol.style.Stroke({color: 'white', width: 1})
+        fill: new ol.style.Fill({ color: 'blue' }),
+        stroke: new ol.style.Stroke({ color: 'white', width: 1 })
     })
 });
 
@@ -71,24 +71,24 @@ map.addLayer(vector);
 map.addLayer(rect_vector);
 map.addInteraction(dragBox);
 
-ol.events.condition.ctrlShiftKeysOnly = function(mapBrowserEvent) {
+ol.events.condition.ctrlShiftKeysOnly = function (mapBrowserEvent) {
     var originalEvent = mapBrowserEvent.originalEvent;
     return (!originalEvent.altKey &&
         (ol.has.MAC ? originalEvent.metaKey : originalEvent.ctrlKey) &&
         originalEvent.shiftKey);
 };
 
-dragBox.on('boxend', function(){
+dragBox.on('boxend', function () {
     console.log(map.getView().getZoom());
 
-    if(map.getView().getZoom() >= 14){
+    if (map.getView().getZoom() >= 14) {
         var rectangle = dragBox.getGeometry().getCoordinates(false)[0];
         var vertexA = rectangle[0];
         var vertexB = rectangle[1];
         var vertexC = rectangle[2];
         var vertexD = rectangle[3];
         var lowerLeft, upperRight;
-        if(vertexA[0] != vertexB[0]) {
+        if (vertexA[0] != vertexB[0]) {
             if (vertexA[0] < vertexB[0]) {
                 upperRight = vertexB;
                 lowerLeft = vertexD;
@@ -109,7 +109,7 @@ dragBox.on('boxend', function(){
             }
         }
         lowerLeft = ol.proj.toLonLat(lowerLeft);
-        upperRight =  ol.proj.toLonLat(upperRight);
+        upperRight = ol.proj.toLonLat(upperRight);
         var str = 'http://www.overpass-api.de/api/xapi?way[bbox='
             + lowerLeft[0] + ','
             + lowerLeft[1] + ','
@@ -119,12 +119,12 @@ dragBox.on('boxend', function(){
         var strmin = + lowerLeft[0] + ','
             + lowerLeft[1] + ','
             + upperRight[0] + ','
-            + upperRight[1] ;
+            + upperRight[1];
 
         drawRect(lowerLeft, upperRight);
 
         wsStartWithSelection(strmin);
-    }else{
+    } else {
 
     }
 })
@@ -135,9 +135,9 @@ function drawRect(lowerLeft, upperRight) {
 
     var polyCoords = [];
     polyCoords.push(lowerLeft);
-    polyCoords.push([lowerLeft[0],upperRight[1]]);
+    polyCoords.push([lowerLeft[0], upperRight[1]]);
     polyCoords.push(upperRight);
-    polyCoords.push([upperRight[0],lowerLeft[1]]);
+    polyCoords.push([upperRight[0], lowerLeft[1]]);
     polyCoords.push(lowerLeft);
 
     var feature = new ol.Feature({
@@ -147,26 +147,26 @@ function drawRect(lowerLeft, upperRight) {
     //source.refresh();
 }
 
-function addData(cars){
+function addData(cars) {
     prepareCrd(cars);
     source.refresh();
 }
 
-function prepareCrd(cars){
+function prepareCrd(cars) {
     var cor = []
-    for(var i = 0; i < cars.length; i++){
+    for (var i = 0; i < cars.length; i++) {
         cor.push(ol.proj.transform(cars[i], 'EPSG:4326', 'EPSG:3857'));
     }
     coordinates = cor;
 }
 
-function draw(){
+function draw() {
 
     var listenerKey;
     listenerKey = map.on('postcompose', animate);
 }
 
-function animate(event){
+function animate(event) {
     var vectorContext = event.vectorContext;
     var me = new ol.geom.MultiPoint(coordinates);
     vectorContext.setStyle(imageStyle);
@@ -175,19 +175,19 @@ function animate(event){
 }
 
 
-function wsStartWithSelection(coord){
+function wsStartWithSelection(coord) {
     map.removeInteraction(dragBox);
-    wsConnect(JSON.stringify({"messageType" : "selectedRect", "coordinates" : coord}));
+    wsConnect(JSON.stringify({ "messageType": "selectedRect", "coordinates": coord }));
 }
 
-function wsStartWithConfigUpload(config){
+function wsStartWithConfigUpload(config) {
     wsConnect(config);
 }
 
-function wsConnect(message){
-    //ws = new WebSocket("wss://serene-plains-38004.herokuapp.com/");
-    ws = new WebSocket("ws://localhost:7070/");
-    ws.onopen = function(){
+function wsConnect(message) {
+    ws = new WebSocket("wss://serene-plains-38004.herokuapp.com/");
+    //ws = new WebSocket("ws://localhost:7070/");
+    ws.onopen = function () {
         console.log("Opening a connection...");
         try {
             ws.send(message);
@@ -198,7 +198,7 @@ function wsConnect(message){
         }
         //map.removeInteraction(dragBox);
     };
-    ws.onmessage = function(event){
+    ws.onmessage = function (event) {
         var data = JSON.parse(event.data);
         if (data["log"] != null)
             console.log(data)
@@ -206,17 +206,17 @@ function wsConnect(message){
             addData(data);
     };
     ws.onclose = function (event) {
-        ws.send(JSON.stringify({"messageType" : "buttonMsg", "value" :"close"}));
+        ws.send(JSON.stringify({ "messageType": "buttonMsg", "value": "close" }));
         console.log("I'm sorry. Bye!");
     };
 }
 
-rect_source.on('clear', function(){
+rect_source.on('clear', function () {
     coordinates = [];
     source.refresh();
 })
 
-source.on('change', function(){
+source.on('change', function () {
     draw();
 })
 
@@ -229,27 +229,27 @@ function setHeight() {
 
 var speed = $('#speed').slider();
 
-speed.on('change', function(event){
-    if(ws != undefined && !(ws.readyState === ws.CLOSED)){
-        ws.send(JSON.stringify({"messageType" : "speedChange", "value" : event.value}));
+speed.on('change', function (event) {
+    if (ws != undefined && !(ws.readyState === ws.CLOSED)) {
+        ws.send(JSON.stringify({ "messageType": "speedChange", "value": event.value }));
         console.log("speed_change");
     }
 });
 
 var capacity = $('#capacity').slider();
 
-capacity.on('change', function(event){
-    if(ws != undefined && !(ws.readyState === ws.CLOSED)){
-        ws.send(JSON.stringify({"messageType" : "capacityChange", "value" : event.value}));
+capacity.on('change', function (event) {
+    if (ws != undefined && !(ws.readyState === ws.CLOSED)) {
+        ws.send(JSON.stringify({ "messageType": "capacityChange", "value": event.value }));
         console.log("capacity_change");
     }
 });
 
 $(window).resize(setHeight);
 
-$('#close').on('click', function(){
-    if(ws != undefined && !(ws.readyState === ws.CLOSED)){
-        ws.send(JSON.stringify({"messageType" : "buttonMsg", "value" : "close"}));
+$('#close').on('click', function () {
+    if (ws != undefined && !(ws.readyState === ws.CLOSED)) {
+        ws.send(JSON.stringify({ "messageType": "buttonMsg", "value": "close" }));
         rect_source.clear()
         map.render();
         ws.close();
@@ -257,24 +257,24 @@ $('#close').on('click', function(){
     }
 })
 
-$('#start_m').on('click', function(){
-    if((ws === undefined || ws.readyState === ws.CLOSED)){
+$('#start_m').on('click', function () {
+    if ((ws === undefined || ws.readyState === ws.CLOSED)) {
         map.addInteraction(dragBox);
     }
-    else{
-        if(confirm("Do you want to start a new session?")){
+    else {
+        if (confirm("Do you want to start a new session?")) {
             clearSession();
             map.addInteraction(dragBox);
         }
-        else{
+        else {
 
         }
     }
 })
 
 function clearSession() {
-    if (!(ws.readyState === ws.CLOSING)){
-        ws.send(JSON.stringify({"messageType" : "button_msg", "value" : "close"}));
+    if (!(ws.readyState === ws.CLOSING)) {
+        ws.send(JSON.stringify({ "messageType": "button_msg", "value": "close" }));
         ws.close();
     }
     rect_source.clear()
@@ -288,8 +288,8 @@ var content
 conf_file.onchange = function () {
     var file = conf_file.files[0]//.value.split('\\')[fileupload.value.split('\\').length - 1];
     if (file) {
-        if(!(ws === undefined || ws.readyState === ws.CLOSED)){
-            if(confirm("Do you want to start a new session?")) {
+        if (!(ws === undefined || ws.readyState === ws.CLOSED)) {
+            if (confirm("Do you want to start a new session?")) {
                 clearSession();
             }
             else {
@@ -316,7 +316,7 @@ conf_file.onchange = function () {
             map.getView().animate({
                 center: ol.proj.fromLonLat([center_lon, center_lat]),
                 duration: 2000,
-                zoom : 15
+                zoom: 15
             });
 
             drawRect(lowerLeft, upperRight);
